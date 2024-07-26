@@ -12,7 +12,8 @@ def create_table():
       CREATE TABLE IF NOT EXISTS mahasiswa(
         NIM TEXT PRIMARY KEY,
         Nama TEXT NOT NULL,
-        Divisi TEXT NOT NULL
+        Divisi TEXT NOT NULL,
+        password TEXT NOT NULL
       )
     """
     )
@@ -22,12 +23,23 @@ def create_table():
       CREATE TABLE IF NOT EXISTS absensi(
         id_absensi INTEGER PRIMARY KEY AUTOINCREMENT,
         id_mahasiswa TEXT,
-        tanggal_absensi DATE NOT NULL,
-        jam_absensi TIME NOT NULL,
-        Keterangan TEXT CHECK(Keterangan IN ('Hadir', 'Tidak Hadir')),
+        tanggal_absensi TEXT NOT NULL,
+        jam_absensi TEXT NOT NULL,
+        Keterangan TEXT CHECK(Keterangan IN ("hadir", "tidak hadir")),
         FOREIGN KEY (id_mahasiswa) REFERENCES mahasiswa(NIM)
       )
     """
+    )
+
+    cursor.execute(
+        """
+        CREATE TABLE IF NOT EXISTS notulensi(
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          judul TEXT NOT NULL,
+          isi_notulensi TEXT NOT NULL,
+          tanggal_notulensi TEXT NOT NULL
+        )
+        """
     )
 
     connection.commit()
