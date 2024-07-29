@@ -32,6 +32,7 @@ async def login(
     credentials: HTTPBasicCredentials = Depends(security),
     db: sqlite3.Connection = Depends(get_db),
 ):
-    if not authenticate_user(db, credentials.username, credentials.password):
+    user = authenticate_user(db, credentials.username, credentials.password)
+    if not user:
         raise HTTPException(status_code=401, detail="Invalid Credentials")
-    return {"detail": "Login successful"}
+    return {"NIM": user["NIM"], "role": user["role"]}

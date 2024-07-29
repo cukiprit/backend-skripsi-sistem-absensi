@@ -12,12 +12,31 @@ router = APIRouter(dependencies=[Depends(get_current_user)])
 async def read_notulensi(db: sqlite3.Connection = Depends(get_db)):
     cursor = db.cursor()
     cursor.execute(
-        "SELECT judul, isi_notulensi, DATE(tanggal_notulensi) FROM notulensi"
+        "SELECT id, judul, isi_notulensi, DATE(tanggal_notulensi) FROM notulensi"
     )
 
     rows = cursor.fetchall()
 
-    return [{"judul": row[0], "isi": row[1], "tanggal": row[2]} for row in rows]
+    return [
+        {"id": row[0], "judul": row[1], "isi": row[2], "tanggal": row[3]}
+        for row in rows
+    ]
+
+
+@router.get("/{id}")
+async def read_notulensi_by_id(id: int, db: sqlite3.Connection = Depends(get_db)):
+    cursor = db.cursor()
+    cursor.execute(
+        "SELECT id, judul, isi_notulensi, DATE(tanggal_notulensi) FROM notulensi WHERE id = ?",
+        (id,),
+    )
+
+    row = cursor.fetchone()
+
+    if row is None:
+        raise HTTPException(status_code=404, detail="Notulensi not found")
+
+    return [{"id": row[0], "judul": row[1], "isi": row[2], "tanggal": row[3]}]
 
 
 @router.post("/", response_model=Notulensi)

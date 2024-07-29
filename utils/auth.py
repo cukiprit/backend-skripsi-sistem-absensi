@@ -21,14 +21,15 @@ def get_password_hash(password):
 
 def authenticate_user(db: sqlite3.Connection, NIM: str, password: str):
     cursor = db.cursor()
-    cursor.execute("SELECT password FROM mahasiswa WHERE NIM = ?", (NIM,))
+    cursor.execute("SELECT password, Divisi FROM mahasiswa WHERE NIM = ?", (NIM,))
     row = cursor.fetchone()
     if row is None:
         return False
     hashed_password = row[0]
+    role = row[1]
     if not verify_password(password, hashed_password):
-        return False
-    return True
+        return None
+    return {"NIM": NIM, "role": role}
 
 
 async def get_current_user(
